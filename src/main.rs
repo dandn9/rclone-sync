@@ -36,6 +36,17 @@ fn help_string(commands_vec: &[String]) -> String {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    #[cfg(not(debug_assertions))]
+    std::panic::set_hook(Box::new(|info| {
+        if let Some(s) = info.payload().downcast_ref::<&str>() {
+            eprintln!("{s}");
+        } else if let Some(s) = info.payload().downcast_ref::<String>() {
+            eprintln!("{s}");
+        } else {
+            eprintln!("panic");
+        }
+    }));
+
     let commands_vec = Commands::ALL.iter().collect::<Vec<_>>();
     let commands_str_vec = commands_vec
         .iter()
@@ -127,7 +138,7 @@ fn sync_files() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut copy_children: Vec<std::process::Child> = Vec::new();
     for (real_path, cloud_path) in paths {
-        println!("Syncing {}", real_path);
+        println!("Syncing \"{}\" to \"{}\"", cloud_path, real_path);
         let path = expand_home(real_path)?;
         copy_children.push(
             std::process::Command::new("rclone")
