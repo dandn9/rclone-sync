@@ -1,0 +1,6 @@
+# Remote folder to sync from, relative to your `remote:` rclone remote.
+folder = "Example Folder/Subfolder"
+
+[map]
+# Map each remote filename to the local destination path you want to write to.
+"example-note.pdf" = "~/path/to/example-note.pdf"
